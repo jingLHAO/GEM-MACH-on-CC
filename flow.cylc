@@ -1,0 +1,43 @@
+[scheduler]
+  allow implicit tasks = True
+  
+[scheduling]
+  [[graph]]
+    R1 = """
+    run_prep_10km => run_mod_10km
+    """
+    
+[runtime]
+  [[run_prep_10km]]
+    script = """ 
+                jobid=$(sbatch $MY_DEFAULT_PATH/runjob/run_prep_10km.sh | awk '{print $4}')
+                echo "Submitted job ID: $jobid"
+                while squeue -j "$jobid" > /dev/null 2>&1; do
+                  sleep 60
+                done
+                sacct -j "$jobid" --format=JobID,State
+                 """ 
+    [[[environment]]]
+      MY_DEFAULT_PATH = /home/username/scratch/os_v524_machOSrun5
+
+  [[run_mod_10km]]
+    script =  """ 
+                jobid=$(sbatch $MY_DEFAULT_PATH/runjob/run_mod_10km.sh | awk '{print $4}')
+                echo "Submitted job ID: $jobid"
+                while squeue -j "$jobid" > /dev/null 2>&1; do
+                  sleep 60
+                done
+                sacct -j "$jobid" --format=JobID,State
+                 """
+    [[[environment]]]
+      MY_DEFAULT_PATH = /home/username/scratch/os_v524_machOSrun5
+
+
+
+
+
+
+
+
+
+
